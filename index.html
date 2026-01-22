@@ -721,6 +721,36 @@
       color: #2e7d32;
     }
     
+    .tsumitate-table .nisa-limit-row {
+      background: #f5f5f5;
+    }
+    
+    .tsumitate-table .nisa-limit-row td {
+      color: #999;
+    }
+    
+    /* NISA上限メッセージ */
+    .nisa-limit-message {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #fff8e1;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #f57c00;
+      line-height: 1.5;
+    }
+    
+    .nisa-limit-badge {
+      display: inline-block;
+      background: #ff9800;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    
     /* 平均取得単価サマリー */
     .avg-cost-summary {
       display: flex;
@@ -777,6 +807,209 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+    
+    /* NISA上限設定 */
+    .nisa-option {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    
+    .nisa-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #333;
+    }
+    
+    .nisa-checkbox {
+      display: none;
+    }
+    
+    .nisa-checkbox-custom {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    
+    .nisa-checkbox:checked + .nisa-checkbox-custom {
+      background: #667eea;
+      border-color: #667eea;
+    }
+    
+    .nisa-checkbox:checked + .nisa-checkbox-custom::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .nisa-checkbox-text {
+      flex: 1;
+    }
+    
+    .nisa-note {
+      font-size: 10px;
+      color: #999;
+      margin-top: 8px;
+      margin-left: 30px;
+    }
+    
+    /* 利益率表示 */
+    .profit-rate {
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    
+    .profit-rate.positive {
+      color: #4caf50;
+    }
+    
+    .profit-rate.negative {
+      color: #f44336;
+    }
+    
+    /* その後の推移セクション */
+    .after-period-section {
+      margin-top: 16px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      border: 2px solid #e8ecf0;
+    }
+    
+    .after-period-section .section-title {
+      margin-bottom: 12px;
+    }
+    
+    .after-period-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .after-period-label {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .after-period-select {
+      padding: 8px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #fff;
+      cursor: pointer;
+    }
+    
+    .after-period-select:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+    
+    .after-period-btn {
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .after-period-btn:hover {
+      background: #5a6fd6;
+    }
+    
+    .after-period-result {
+      margin-top: 14px;
+    }
+    
+    .after-period-cards {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+    
+    .after-period-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: center;
+      flex: 1;
+      max-width: 140px;
+    }
+    
+    .after-period-card.highlight {
+      background: #e8f5e9;
+      border: 2px solid #4caf50;
+    }
+    
+    .after-period-card.highlight.negative {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+    
+    .after-card-label {
+      font-size: 10px;
+      color: #999;
+    }
+    
+    .after-card-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+      margin-top: 4px;
+    }
+    
+    .after-card-date {
+      font-size: 10px;
+      color: #999;
+      margin-top: 2px;
+    }
+    
+    .after-period-arrow {
+      font-size: 20px;
+      color: #667eea;
+    }
+    
+    .after-period-change {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .after-period-change.positive {
+      color: #4caf50;
+    }
+    
+    .after-period-change.negative {
+      color: #f44336;
+    }
+    
+    .after-period-chart-container {
+      margin-top: 12px;
+      height: 150px;
+    }
+    
+    .after-period-chart-container canvas {
+      max-height: 150px;
+    }
   </style>
 </head>
 <body>
@@ -784,7 +1017,7 @@
     <!-- ヘッダー -->
     <div class="header">
       <h1>💰 積立投資シミュレーター</h1>
-      <p>将来どのくらい増えるか試してみよう</p>
+      <p>ドルコスト平均法の効果を体験しよう</p>
     </div>
     
     <div class="content">
@@ -931,6 +1164,19 @@
         </div>
       </div>
       
+      <!-- NISA上限設定 -->
+      <div class="section">
+        <div class="section-title">NISA上限設定</div>
+        <div class="nisa-option">
+          <label class="nisa-checkbox-label">
+            <input type="checkbox" id="nisaLimitCheck" class="nisa-checkbox">
+            <span class="nisa-checkbox-custom"></span>
+            <span class="nisa-checkbox-text">生涯投資枠（1,800万円）に達したら積立停止</span>
+          </label>
+          <div class="nisa-note">※ 上限到達後も保有継続として運用をシミュレーション</div>
+        </div>
+      </div>
+      
       <!-- シミュレーションボタン -->
       <button class="simulate-btn" id="simulateBtn">
         ▶ シミュレーション開始
@@ -945,12 +1191,14 @@
           <div class="comparison-card" id="ikkatsuCard">
             <div class="label">一括投資</div>
             <div class="amount" id="ikkatsuAmount">-</div>
+            <div class="profit-rate" id="ikkatsuProfitRate"></div>
             <div class="diff" id="ikkatsuDiff"></div>
             <div class="principal" id="ikkatsuPrincipal">元本 -</div>
           </div>
           <div class="comparison-card" id="tsumitateCard">
             <div class="label">積立投資</div>
             <div class="amount" id="tsumitateAmount">-</div>
+            <div class="profit-rate" id="tsumitateProfitRate"></div>
             <div class="diff" id="tsumitateDiff"></div>
             <div class="principal" id="tsumitatePrincipal">元本 -</div>
           </div>
@@ -976,6 +1224,41 @@
             <div class="legend-item">
               <div class="legend-dot ikkatsu"></div>
               一括投資
+            </div>
+          </div>
+        </div>
+        
+        <!-- その後の推移セクション -->
+        <div class="after-period-section" id="afterPeriodSection" style="display: none;">
+          <div class="section-title">📈 その後の推移（保有継続した場合）</div>
+          <div class="after-period-controls">
+            <label class="after-period-label">確認期間：</label>
+            <select id="afterPeriodYears" class="after-period-select">
+              <option value="1">1年後</option>
+              <option value="2">2年後</option>
+              <option value="3">3年後</option>
+              <option value="5" selected>5年後</option>
+              <option value="max">最新まで</option>
+            </select>
+            <button class="after-period-btn" id="showAfterPeriodBtn">表示</button>
+          </div>
+          <div class="after-period-result" id="afterPeriodResult" style="display: none;">
+            <div class="after-period-cards">
+              <div class="after-period-card">
+                <div class="after-card-label">積立終了時</div>
+                <div class="after-card-value" id="afterEndValue">-</div>
+                <div class="after-card-date" id="afterEndDate">-</div>
+              </div>
+              <div class="after-period-arrow">→</div>
+              <div class="after-period-card highlight">
+                <div class="after-card-label" id="afterFutureLabel">5年後</div>
+                <div class="after-card-value" id="afterFutureValue">-</div>
+                <div class="after-card-date" id="afterFutureDate">-</div>
+              </div>
+            </div>
+            <div class="after-period-change" id="afterPeriodChange"></div>
+            <div class="after-period-chart-container">
+              <canvas id="afterPeriodChart"></canvas>
             </div>
           </div>
         </div>
@@ -1040,6 +1323,9 @@
                     <div class="avg-cost-value" id="purchaseCount">-</div>
                   </div>
                 </div>
+                
+                <!-- NISA上限到達メッセージ -->
+                <div class="nisa-limit-message" id="nisaLimitMessage" style="display: none;"></div>
               </div>
             </div>
           </div>
@@ -1091,12 +1377,18 @@
       endYear: 2024,
       endMonth: 1,
       monthlyAmount: 30000,
+      nisaLimit: false,
+      nisaMaxAmount: 18000000,
       broker: {
         name: 'sbi',
         cardRate: 0.5,
         holdingRate: 0.02
       }
     };
+    
+    // シミュレーション結果を保持（その後の推移で使用）
+    let lastSimulationResult = null;
+    let afterPeriodChart = null;
 
     // ========================================
     // 初期化
@@ -1262,6 +1554,14 @@
       
       // シミュレーションボタン
       document.getElementById('simulateBtn').addEventListener('click', runSimulation);
+      
+      // NISA上限チェックボックス
+      document.getElementById('nisaLimitCheck').addEventListener('change', (e) => {
+        state.nisaLimit = e.target.checked;
+      });
+      
+      // その後の推移ボタン
+      document.getElementById('showAfterPeriodBtn').addEventListener('click', showAfterPeriod);
     }
 
     function updatePeriodBadge() {
@@ -1551,14 +1851,39 @@
       let totalUnits = 0;
       let totalInvestment = 0;
       const monthlyValues = [];
+      let nisaLimitReached = false;
+      let nisaLimitReachedAt = null;
       
       // 平均価格を計算（ハイライト用）
       const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
       
       prices.forEach((price, i) => {
-        const units = state.monthlyAmount / price;
-        totalUnits += units;
-        totalInvestment += state.monthlyAmount;
+        let investmentThisMonth = 0;
+        let unitsThisMonth = 0;
+        
+        // NISA上限チェック
+        if (state.nisaLimit && totalInvestment >= state.nisaMaxAmount) {
+          // 上限到達後は積立しない（保有継続）
+          if (!nisaLimitReached) {
+            nisaLimitReached = true;
+            nisaLimitReachedAt = dates[i];
+          }
+          investmentThisMonth = 0;
+          unitsThisMonth = 0;
+        } else if (state.nisaLimit && totalInvestment + state.monthlyAmount > state.nisaMaxAmount) {
+          // 上限に達する月は、残りの枠だけ投資
+          investmentThisMonth = state.nisaMaxAmount - totalInvestment;
+          unitsThisMonth = investmentThisMonth / price;
+          nisaLimitReached = true;
+          nisaLimitReachedAt = dates[i];
+        } else {
+          // 通常の積立
+          investmentThisMonth = state.monthlyAmount;
+          unitsThisMonth = investmentThisMonth / price;
+        }
+        
+        totalUnits += unitsThisMonth;
+        totalInvestment += investmentThisMonth;
         
         const currentValue = totalUnits * price;
         monthlyValues.push(currentValue);
@@ -1566,12 +1891,13 @@
         history.push({
           date: dates[i],
           price,
-          units,
+          units: unitsThisMonth,
           totalUnits,
-          investment: state.monthlyAmount,
+          investment: investmentThisMonth,
           totalInvestment,
           currentValue,
-          isHighlight: price < avgPrice * 0.95 // 平均より5%以上安い
+          isHighlight: price < avgPrice * 0.95, // 平均より5%以上安い
+          isNisaLimitReached: nisaLimitReached && investmentThisMonth === 0
         });
       });
       
@@ -1587,8 +1913,10 @@
         finalValue,
         profit: finalValue - totalInvestment,
         profitRate: ((finalValue / totalInvestment) - 1) * 100,
-        purchaseCount: history.length,
-        monthlyValues
+        purchaseCount: history.filter(h => h.investment > 0).length,
+        monthlyValues,
+        nisaLimitReached,
+        nisaLimitReachedAt
       };
     }
 
@@ -1618,6 +1946,9 @@
       const resultsDiv = document.getElementById('results');
       resultsDiv.classList.add('show');
       
+      // 結果を保持（その後の推移で使用）
+      lastSimulationResult = result;
+      
       // 金額フォーマット
       const formatYen = (val) => Math.round(val).toLocaleString() + '円';
       const formatRate = (val) => (val >= 0 ? '+' : '') + val.toFixed(1) + '%';
@@ -1631,14 +1962,21 @@
       document.getElementById('ikkatsuAmount').textContent = formatYen(result.ikkatsu.finalValue);
       document.getElementById('ikkatsuPrincipal').textContent = '元本 ' + formatYen(result.ikkatsu.totalInvestment);
       
+      // 一括投資の利益率（常に表示）
+      const ikkatsuProfitRateEl = document.getElementById('ikkatsuProfitRate');
+      ikkatsuProfitRateEl.textContent = '元本比 ' + formatRate(result.ikkatsu.profitRate);
+      ikkatsuProfitRateEl.className = 'profit-rate ' + (result.ikkatsu.profitRate >= 0 ? 'positive' : 'negative');
+      
+      // 一括投資の比較差分
       const ikkatsuDiff = document.getElementById('ikkatsuDiff');
       if (!tsumitateWins) {
         const diff = result.ikkatsu.finalValue - result.tsumitate.finalValue;
-        ikkatsuDiff.textContent = '積立より +' + formatYen(diff);
+        ikkatsuDiff.textContent = '積立より +' + formatYen(diff) + ' 🏆';
         ikkatsuDiff.className = 'diff positive';
       } else {
-        ikkatsuDiff.textContent = formatRate(result.ikkatsu.profitRate);
-        ikkatsuDiff.className = 'diff';
+        const diff = result.tsumitate.finalValue - result.ikkatsu.finalValue;
+        ikkatsuDiff.textContent = '積立より -' + formatYen(diff);
+        ikkatsuDiff.className = 'diff negative';
       }
       
       // 積立投資カード
@@ -1647,14 +1985,21 @@
       document.getElementById('tsumitateAmount').textContent = formatYen(result.tsumitate.finalValue);
       document.getElementById('tsumitatePrincipal').textContent = '元本 ' + formatYen(result.tsumitate.totalInvestment);
       
+      // 積立投資の利益率（常に表示）
+      const tsumitateProfitRateEl = document.getElementById('tsumitateProfitRate');
+      tsumitateProfitRateEl.textContent = '元本比 ' + formatRate(result.tsumitate.profitRate);
+      tsumitateProfitRateEl.className = 'profit-rate ' + (result.tsumitate.profitRate >= 0 ? 'positive' : 'negative');
+      
+      // 積立投資の比較差分
       const tsumitateDiff = document.getElementById('tsumitateDiff');
       if (tsumitateWins) {
         const diff = result.tsumitate.finalValue - result.ikkatsu.finalValue;
-        tsumitateDiff.textContent = '一括より +' + formatYen(diff) + ' 💪';
+        tsumitateDiff.textContent = '一括より +' + formatYen(diff) + ' 🏆';
         tsumitateDiff.className = 'diff positive';
       } else {
-        tsumitateDiff.textContent = formatRate(result.tsumitate.profitRate);
-        tsumitateDiff.className = 'diff';
+        const diff = result.ikkatsu.finalValue - result.tsumitate.finalValue;
+        tsumitateDiff.textContent = '一括より -' + formatYen(diff);
+        tsumitateDiff.className = 'diff negative';
       }
       
       // ポイント
@@ -1663,6 +2008,15 @@
       
       // グラフ描画
       drawChart(result);
+      
+      // その後の推移セクションを表示（カスタム利回り以外）
+      const afterPeriodSection = document.getElementById('afterPeriodSection');
+      if (state.fund !== 'custom') {
+        afterPeriodSection.style.display = 'block';
+        document.getElementById('afterPeriodResult').style.display = 'none';
+      } else {
+        afterPeriodSection.style.display = 'none';
+      }
       
       // 一括投資詳細
       const startDate = new Date(result.ikkatsu.purchaseDate);
@@ -1703,11 +2057,17 @@
       const tbody = document.getElementById('tsumitateTableBody');
       tbody.innerHTML = result.tsumitate.history.map(h => {
         const date = new Date(h.date);
+        let rowClass = '';
+        if (h.isNisaLimitReached) {
+          rowClass = 'nisa-limit-row';
+        } else if (h.isHighlight) {
+          rowClass = 'highlight';
+        }
         return `
-          <tr class="${h.isHighlight ? 'highlight' : ''}">
+          <tr class="${rowClass}">
             <td>${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}</td>
             <td>${formatPriceDetail(h.price)}</td>
-            <td>${h.units.toFixed(4)}</td>
+            <td>${h.units > 0 ? h.units.toFixed(4) : '-'}</td>
             <td>${h.totalUnits.toFixed(4)}</td>
           </tr>
         `;
@@ -1718,8 +2078,183 @@
       document.getElementById('totalUnits').textContent = result.tsumitate.totalUnits.toFixed(4) + '口';
       document.getElementById('purchaseCount').textContent = result.tsumitate.purchaseCount + '回';
       
+      // NISA上限到達メッセージ
+      const nisaMessageEl = document.getElementById('nisaLimitMessage');
+      if (result.tsumitate.nisaLimitReached && result.tsumitate.nisaLimitReachedAt) {
+        const limitDate = new Date(result.tsumitate.nisaLimitReachedAt);
+        nisaMessageEl.innerHTML = `<span class="nisa-limit-badge">📌 NISA上限到達</span> ${limitDate.getFullYear()}年${limitDate.getMonth()+1}月に1,800万円に到達。以降は保有継続として計算。`;
+        nisaMessageEl.style.display = 'block';
+      } else {
+        nisaMessageEl.style.display = 'none';
+      }
+      
       // 結果までスクロール
       resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showAfterPeriod() {
+      if (!lastSimulationResult || state.fund === 'custom') return;
+      
+      const yearsSelect = document.getElementById('afterPeriodYears');
+      const yearsValue = yearsSelect.value;
+      
+      // 終了日から指定期間後のデータを取得
+      const endDate = lastSimulationResult.dates[lastSimulationResult.dates.length - 1];
+      const endDateObj = new Date(endDate);
+      
+      let targetDate;
+      let labelText;
+      
+      if (yearsValue === 'max') {
+        // 最新データまで
+        targetDate = new Date(indexData.data[indexData.data.length - 1].date);
+        labelText = '最新';
+      } else {
+        const years = parseInt(yearsValue);
+        targetDate = new Date(endDateObj);
+        targetDate.setFullYear(targetDate.getFullYear() + years);
+        labelText = years + '年後';
+      }
+      
+      // 終了日以降のデータをフィルタ
+      const afterData = indexData.data.filter(d => {
+        const dDate = new Date(d.date);
+        return dDate >= endDateObj && dDate <= targetDate;
+      });
+      
+      if (afterData.length < 2) {
+        alert('指定期間のデータがありません。より短い期間を選択してください。');
+        return;
+      }
+      
+      // 積立終了時の評価額と口数
+      const endUnits = lastSimulationResult.tsumitate.totalUnits;
+      const endPrice = afterData[0][state.fund];
+      const endValue = endUnits * endPrice;
+      
+      // 指定期間後の評価額
+      const futurePrice = afterData[afterData.length - 1][state.fund];
+      const futureValue = endUnits * futurePrice;
+      
+      // 変化率
+      const changeRate = ((futureValue / endValue) - 1) * 100;
+      const changeAmount = futureValue - endValue;
+      
+      // 結果を表示
+      const resultDiv = document.getElementById('afterPeriodResult');
+      resultDiv.style.display = 'block';
+      
+      // 終了時
+      document.getElementById('afterEndValue').textContent = formatPrice(endValue);
+      document.getElementById('afterEndDate').textContent = endDateObj.getFullYear() + '/' + (endDateObj.getMonth() + 1);
+      
+      // 将来
+      document.getElementById('afterFutureLabel').textContent = labelText;
+      document.getElementById('afterFutureValue').textContent = formatPrice(futureValue);
+      const futureDateObj = new Date(afterData[afterData.length - 1].date);
+      document.getElementById('afterFutureDate').textContent = futureDateObj.getFullYear() + '/' + (futureDateObj.getMonth() + 1);
+      
+      // 変化カード色
+      const futureCard = document.querySelector('.after-period-card.highlight');
+      if (changeRate >= 0) {
+        futureCard.classList.remove('negative');
+      } else {
+        futureCard.classList.add('negative');
+      }
+      
+      // 変化表示
+      const changeEl = document.getElementById('afterPeriodChange');
+      const sign = changeRate >= 0 ? '+' : '';
+      changeEl.textContent = `${sign}${Math.round(changeAmount).toLocaleString()}円（${sign}${changeRate.toFixed(1)}%）`;
+      changeEl.className = 'after-period-change ' + (changeRate >= 0 ? 'positive' : 'negative');
+      
+      // グラフ描画
+      drawAfterPeriodChart(afterData, endUnits);
+    }
+    
+    function drawAfterPeriodChart(afterData, units) {
+      const ctx = document.getElementById('afterPeriodChart').getContext('2d');
+      
+      if (afterPeriodChart) {
+        afterPeriodChart.destroy();
+      }
+      
+      const prices = afterData.map(d => d[state.fund]);
+      const values = prices.map(p => units * p);
+      const dates = afterData.map(d => d.date);
+      
+      // ラベル間引き
+      const step = Math.ceil(dates.length / 12);
+      const labels = dates.map((d, i) => {
+        if (i % step === 0 || i === dates.length - 1) {
+          const date = new Date(d);
+          return `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}`;
+        }
+        return '';
+      });
+      
+      const startValue = values[0];
+      const endValue = values[values.length - 1];
+      const isPositive = endValue >= startValue;
+      const lineColor = isPositive ? '#4caf50' : '#f44336';
+      const bgColor = isPositive ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)';
+      
+      afterPeriodChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            borderColor: lineColor,
+            backgroundColor: bgColor,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => '¥' + Math.round(ctx.raw).toLocaleString()
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                maxRotation: 0,
+                font: { size: 9 },
+                callback: function(val, index) {
+                  const label = this.getLabelForValue(val);
+                  return label || null;
+                }
+              }
+            },
+            y: {
+              grid: { color: '#f0f0f0' },
+              ticks: {
+                callback: (val) => {
+                  if (val >= 10000) {
+                    return '¥' + (val / 10000).toFixed(0) + '万';
+                  }
+                  return '¥' + val.toLocaleString();
+                },
+                font: { size: 9 },
+                maxTicksLimit: 5
+              }
+            }
+          },
+          animation: {
+            duration: 500
+          }
+        }
+      });
     }
 
     function drawChart(result) {
