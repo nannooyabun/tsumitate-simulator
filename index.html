@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>積立投資シミュレーター</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 16px;
+    }
+    
+    .phone-frame {
+      max-width: 420px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+    
+    .content {
+      padding: 16px;
+    }
+    
+    .section {
+      margin-bottom: 20px;
+    }
+    
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 14px;
+      background: #667eea;
+      border-radius: 2px;
+    }
+    
+    /* 銘柄選択 */
+    .fund-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    
+    .fund-btn {
+      padding: 12px 6px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: #fff;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .fund-btn.active {
+      border-color: #667eea;
+      background: #f0f3ff;
+    }
+    
+    .fund-btn .icon {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    
+    .fund-btn .name {
+      font-size: 10px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .fund-btn .subtext {
+      font-size: 8px;
+      color: #999;
+    }
+    
+    /* カスタム利回り入力 */
+    .custom-rate-container {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      display: none;
+    }
+    
+    .custom-rate-container.show {
+      display: block;
+    }
+    
+    .custom-rate-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .custom-rate-label {
+      font-size: 12px;
+      color: #666;
+      white-space: nowrap;
+    }
+    
+    .custom-rate-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    
+    .custom-rate-input-wrap:focus-within {
+      border-color: #667eea;
+    }
+    
+    .custom-rate-input {
+      flex: 1;
+      border: none;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: right;
+      outline: none;
+      width: 60px;
+    }
+    
+    .custom-rate-unit {
+      font-size: 14px;
+      color: #666;
+      margin-left: 4px;
+    }
+    
+    .custom-rate-presets {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    
+    .rate-preset-btn {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 11px;
+      color: #666;
+      cursor: pointer;
+    }
+    
+    .rate-preset-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    
+    /* 期間選択 */
+    .period-selector {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    
+    .period-picker {
+      flex: 1;
+    }
+    
+    .period-picker-label {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+    
+    .period-picker-inputs {
+      display: flex;
+      gap: 6px;
+    }
+    
+    .period-select {
+      flex: 1;
+      padding: 10px 4px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      background: #fff;
+      cursor: pointer;
+      text-align: center;
+    }
+    
+    .period-select:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+    
+    .period-arrow {
+      color: #667eea;
+      font-size: 20px;
+      padding-bottom: 10px;
+    }
+    
+    .period-summary {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    
+    .period-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    
+    /* 価格推移プレビュー */
+    .price-preview {
+      margin-top: 16px;
+      background: #fff;
+      border: 2px solid #e8ecf0;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    
+    .price-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .price-preview-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .price-preview-range {
+      font-size: 10px;
+      color: #999;
+    }
+    
+    .price-preview-chart {
+      height: 120px;
+      margin-bottom: 8px;
+    }
+    
+    .price-preview-chart canvas {
+      max-height: 120px;
+    }
+    
+    .price-preview-stats {
+      display: flex;
+      justify-content: space-around;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    
+    .preview-stat {
+      text-align: center;
+    }
+    
+    .preview-stat-label {
+      display: block;
+      font-size: 10px;
+      color: #999;
+    }
+    
+    .preview-stat-value {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .preview-stat-value.positive {
+      color: #4caf50;
+    }
+    
+    .preview-stat-value.negative {
+      color: #f44336;
+    }
+    
+    /* 金額入力 */
+    .amount-input-container {
+      display: flex;
+      align-items: center;
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 8px 16px;
+      gap: 8px;
+    }
+    
+    .amount-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: right;
+      outline: none;
+      width: 100%;
+    }
+    
+    .amount-unit {
+      font-size: 16px;
+      color: #666;
+    }
+    
+    .amount-presets {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .preset-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+    }
+    
+    .preset-btn:hover, .preset-btn.active {
+      border-color: #667eea;
+      color: #667eea;
+      background: #f0f3ff;
+    }
+    
+    /* 証券会社選択 */
+    .broker-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    
+    .broker-btn {
+      padding: 10px 8px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      background: #fff;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .broker-btn.active {
+      border-color: #667eea;
+      background: #f0f3ff;
+    }
+    
+    .broker-btn .name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .broker-btn .rate {
+      font-size: 9px;
+      color: #667eea;
+      margin-top: 2px;
+    }
+    
+    /* シミュレーションボタン */
+    .simulate-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    
+    .simulate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .simulate-btn:active {
+      transform: translateY(0);
+    }
+    
+    .simulate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    /* 結果表示エリア */
+    .results {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 16px;
+      display: none;
+    }
+    
+    .results.show {
+      display: block;
+    }
+    
+    .results-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
+    .comparison {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .comparison-card {
+      flex: 1;
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      border: 2px solid transparent;
+    }
+    
+    .comparison-card.winner {
+      border-color: #667eea;
+    }
+    
+    .comparison-card .label {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+    
+    .comparison-card .amount {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .comparison-card.winner .amount {
+      color: #667eea;
+    }
+    
+    .comparison-card .diff {
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    
+    .comparison-card .diff.positive {
+      color: #4caf50;
+    }
+    
+    .comparison-card .diff.negative {
+      color: #f44336;
+    }
+    
+    .comparison-card .principal {
+      font-size: 10px;
+      color: #999;
+      margin-top: 4px;
+    }
+    
+    /* ポイント表示 */
+    .points-display {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .points-icon {
+      font-size: 20px;
+    }
+    
+    .points-info {
+      flex: 1;
+    }
+    
+    .points-label {
+      font-size: 10px;
+      color: #996633;
+    }
+    
+    .points-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #cc6600;
+    }
+    
+    /* グラフエリア */
+    .chart-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .chart-container canvas {
+      max-height: 200px;
+    }
+    
+    /* 凡例 */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    
+    .legend-dot.tsumitate {
+      background: #667eea;
+    }
+    
+    .legend-dot.ikkatsu {
+      background: #e0e0e0;
+    }
+    
+    /* 購入履歴セクション */
+    .purchase-history {
+      margin-top: 16px;
+    }
+    
+    .history-accordion {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .history-header:hover {
+      background: #f8f9fa;
+    }
+    
+    .history-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .history-icon {
+      font-size: 18px;
+    }
+    
+    .history-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .history-arrow {
+      font-size: 12px;
+      color: #999;
+      transition: transform 0.3s;
+    }
+    
+    .history-accordion.open .history-arrow {
+      transform: rotate(180deg);
+    }
+    
+    .history-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    
+    .history-accordion.open .history-content {
+      max-height: 500px;
+    }
+    
+    .history-inner {
+      padding: 0 14px 14px;
+    }
+    
+    /* 一括投資の詳細 */
+    .ikkatsu-detail {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    
+    .ikkatsu-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .ikkatsu-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .ikkatsu-label {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .ikkatsu-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    /* 積立投資の購入履歴テーブル */
+    .tsumitate-table-container {
+      max-height: 250px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .tsumitate-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    
+    .tsumitate-table thead {
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+    }
+    
+    .tsumitate-table th {
+      padding: 8px 6px;
+      text-align: center;
+      font-weight: 600;
+      color: #666;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .tsumitate-table td {
+      padding: 8px 6px;
+      text-align: center;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .tsumitate-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .tsumitate-table .highlight {
+      background: #e8f5e9;
+    }
+    
+    .tsumitate-table .highlight td {
+      color: #2e7d32;
+    }
+    
+    /* 平均取得単価サマリー */
+    .avg-cost-summary {
+      display: flex;
+      justify-content: space-between;
+      background: #e8f0fe;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+    
+    .avg-cost-item {
+      text-align: center;
+    }
+    
+    .avg-cost-label {
+      font-size: 10px;
+      color: #5c6bc0;
+    }
+    
+    .avg-cost-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #3949ab;
+    }
+    
+    /* 注釈 */
+    .note {
+      margin-top: 16px;
+      padding: 12px;
+      background: #fff3e0;
+      border-radius: 8px;
+      font-size: 10px;
+      color: #e65100;
+      line-height: 1.5;
+    }
+    
+    /* ローディング */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- ヘッダー -->
+    <div class="header">
+      <h1>💰 積立投資シミュレーター</h1>
+      <p>ドルコスト平均法の効果を体験しよう</p>
+    </div>
+    
+    <div class="content">
+      <!-- 銘柄選択 -->
+      <div class="section">
+        <div class="section-title">投資先を選ぶ</div>
+        <div class="fund-selector">
+          <div class="fund-btn active" data-fund="acwi">
+            <div class="icon">🌍</div>
+            <div class="name">オルカン</div>
+            <div class="subtext">全世界株式</div>
+          </div>
+          <div class="fund-btn" data-fund="fang">
+            <div class="icon">🚀</div>
+            <div class="name">FANG+</div>
+            <div class="subtext">米テック10社</div>
+          </div>
+          <div class="fund-btn" data-fund="nikkei">
+            <div class="icon">🗾</div>
+            <div class="name">日経平均</div>
+            <div class="subtext">日本225社</div>
+          </div>
+          <div class="fund-btn" data-fund="custom">
+            <div class="icon">⚙️</div>
+            <div class="name">カスタム</div>
+            <div class="subtext">利回り指定</div>
+          </div>
+        </div>
+        
+        <!-- カスタム利回り入力 -->
+        <div class="custom-rate-container" id="customRateContainer">
+          <div class="custom-rate-row">
+            <span class="custom-rate-label">想定年利回り</span>
+            <div class="custom-rate-input-wrap">
+              <input type="number" class="custom-rate-input" id="customRate" value="5.0" step="0.1" min="0" max="50">
+              <span class="custom-rate-unit">%</span>
+            </div>
+          </div>
+          <div class="custom-rate-presets">
+            <button class="rate-preset-btn" data-rate="3">3%</button>
+            <button class="rate-preset-btn" data-rate="5">5%</button>
+            <button class="rate-preset-btn" data-rate="7">7%</button>
+            <button class="rate-preset-btn" data-rate="10">10%</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 投資期間 -->
+      <div class="section">
+        <div class="section-title">投資期間</div>
+        <div class="period-selector">
+          <div class="period-picker">
+            <div class="period-picker-label">開始</div>
+            <div class="period-picker-inputs">
+              <select class="period-select" id="startYear"></select>
+              <select class="period-select" id="startMonth"></select>
+            </div>
+          </div>
+          
+          <div class="period-arrow">→</div>
+          
+          <div class="period-picker">
+            <div class="period-picker-label">終了</div>
+            <div class="period-picker-inputs">
+              <select class="period-select" id="endYear"></select>
+              <select class="period-select" id="endMonth"></select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="period-summary">
+          <div class="period-badge" id="periodBadge">📅 投資期間：10年0ヶ月</div>
+        </div>
+        
+        <!-- 価格推移プレビュー -->
+        <div class="price-preview" id="pricePreview">
+          <div class="price-preview-header">
+            <span class="price-preview-title" id="previewTitle">📈 オルカン 価格推移</span>
+            <span class="price-preview-range" id="previewRange"></span>
+          </div>
+          <div class="price-preview-chart">
+            <canvas id="pricePreviewChart"></canvas>
+          </div>
+          <div class="price-preview-stats">
+            <div class="preview-stat">
+              <span class="preview-stat-label">開始時</span>
+              <span class="preview-stat-value" id="previewStartPrice">-</span>
+            </div>
+            <div class="preview-stat">
+              <span class="preview-stat-label">終了時</span>
+              <span class="preview-stat-value" id="previewEndPrice">-</span>
+            </div>
+            <div class="preview-stat">
+              <span class="preview-stat-label">変動率</span>
+              <span class="preview-stat-value" id="previewChangeRate">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 毎月の積立金額 -->
+      <div class="section">
+        <div class="section-title">毎月の積立金額</div>
+        <div class="amount-input-container">
+          <input type="number" class="amount-input" id="monthlyAmount" value="30000" min="1000" step="1000">
+          <span class="amount-unit">円/月</span>
+        </div>
+        <div class="amount-presets">
+          <button class="preset-btn" data-amount="10000">1万円</button>
+          <button class="preset-btn active" data-amount="30000">3万円</button>
+          <button class="preset-btn" data-amount="50000">5万円</button>
+          <button class="preset-btn" data-amount="100000">10万円</button>
+        </div>
+      </div>
+      
+      <!-- 証券会社 -->
+      <div class="section">
+        <div class="section-title">証券会社（ポイント還元）</div>
+        <div class="broker-selector">
+          <div class="broker-btn" data-broker="none" data-card-rate="0" data-holding-rate="0">
+            <div class="name">なし</div>
+            <div class="rate">0%</div>
+          </div>
+          <div class="broker-btn active" data-broker="sbi" data-card-rate="0.5" data-holding-rate="0.02">
+            <div class="name">SBI証券</div>
+            <div class="rate">0.5%+保有</div>
+          </div>
+          <div class="broker-btn" data-broker="rakuten" data-card-rate="0.5" data-holding-rate="0">
+            <div class="name">楽天証券</div>
+            <div class="rate">0.5%</div>
+          </div>
+          <div class="broker-btn" data-broker="monex" data-card-rate="1.1" data-holding-rate="0.03">
+            <div class="name">マネックス</div>
+            <div class="rate">1.1%+保有</div>
+          </div>
+          <div class="broker-btn" data-broker="au" data-card-rate="1.0" data-holding-rate="0.02">
+            <div class="name">auカブコム</div>
+            <div class="rate">1%+保有</div>
+          </div>
+          <div class="broker-btn" data-broker="custom" data-card-rate="0" data-holding-rate="0">
+            <div class="name">カスタム</div>
+            <div class="rate">自由入力</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- シミュレーションボタン -->
+      <button class="simulate-btn" id="simulateBtn">
+        ▶ シミュレーション開始
+      </button>
+      
+      <!-- 結果表示 -->
+      <div class="results" id="results">
+        <div class="results-title">📊 シミュレーション結果</div>
+        
+        <!-- 一括 vs 積立 比較 -->
+        <div class="comparison">
+          <div class="comparison-card" id="ikkatsuCard">
+            <div class="label">一括投資</div>
+            <div class="amount" id="ikkatsuAmount">-</div>
+            <div class="diff" id="ikkatsuDiff"></div>
+            <div class="principal" id="ikkatsuPrincipal">元本 -</div>
+          </div>
+          <div class="comparison-card" id="tsumitateCard">
+            <div class="label">積立投資</div>
+            <div class="amount" id="tsumitateAmount">-</div>
+            <div class="diff" id="tsumitateDiff"></div>
+            <div class="principal" id="tsumitatePrincipal">元本 -</div>
+          </div>
+        </div>
+        
+        <!-- ポイント表示 -->
+        <div class="points-display">
+          <div class="points-icon">🎁</div>
+          <div class="points-info">
+            <div class="points-label">獲得ポイント（積立期間中）</div>
+            <div class="points-value" id="totalPoints">- pt</div>
+          </div>
+        </div>
+        
+        <!-- グラフ -->
+        <div class="chart-container">
+          <canvas id="resultChart"></canvas>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot tsumitate"></div>
+              積立投資
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot ikkatsu"></div>
+              一括投資
+            </div>
+          </div>
+        </div>
+        
+        <!-- 購入履歴セクション -->
+        <div class="purchase-history">
+          <!-- 一括投資の詳細 -->
+          <div class="history-accordion" id="ikkatsuAccordion">
+            <div class="history-header">
+              <div class="history-header-left">
+                <span class="history-icon">💵</span>
+                <span class="history-title">一括投資の購入詳細</span>
+              </div>
+              <span class="history-arrow">▼</span>
+            </div>
+            <div class="history-content">
+              <div class="history-inner">
+                <div class="ikkatsu-detail" id="ikkatsuDetail">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 積立投資の詳細 -->
+          <div class="history-accordion" id="tsumitateAccordion">
+            <div class="history-header">
+              <div class="history-header-left">
+                <span class="history-icon">📝</span>
+                <span class="history-title">積立投資の購入履歴</span>
+              </div>
+              <span class="history-arrow">▼</span>
+            </div>
+            <div class="history-content">
+              <div class="history-inner">
+                <div class="tsumitate-table-container">
+                  <table class="tsumitate-table">
+                    <thead>
+                      <tr>
+                        <th>年月</th>
+                        <th>価格</th>
+                        <th>購入口数</th>
+                        <th>累計口数</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tsumitateTableBody">
+                    </tbody>
+                  </table>
+                </div>
+                
+                <!-- サマリー -->
+                <div class="avg-cost-summary">
+                  <div class="avg-cost-item">
+                    <div class="avg-cost-label">平均取得単価</div>
+                    <div class="avg-cost-value" id="avgCost">-</div>
+                  </div>
+                  <div class="avg-cost-item">
+                    <div class="avg-cost-label">合計購入口数</div>
+                    <div class="avg-cost-value" id="totalUnits">-</div>
+                  </div>
+                  <div class="avg-cost-item">
+                    <div class="avg-cost-label">購入回数</div>
+                    <div class="avg-cost-value" id="purchaseCount">-</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 注釈 -->
+      <div class="note">
+        ⚠️ このシミュレーションは過去のデータに基づく参考値です。将来の運用成果を保証するものではありません。カスタム利回りは一定の年利を想定した理論値です。ポイント還元率は2024年時点の情報であり、実際とは異なる場合があります。緑色の行は平均より安く多く買えた月を示しています。
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // グローバル変数・定数
+    // ========================================
+    let indexData = null;
+    let chart = null;
+    let previewChart = null;
+    
+    const fundNames = {
+      acwi: 'オルカン',
+      fang: 'FANG+',
+      nikkei: '日経平均',
+      custom: 'カスタム'
+    };
+    
+    // 数値を見やすくフォーマットする関数
+    function formatPrice(val) {
+      if (val >= 1000000) {
+        return '¥' + (val / 10000).toFixed(0) + '万';
+      } else if (val >= 10000) {
+        return '¥' + (val / 10000).toFixed(1) + '万';
+      } else {
+        return '¥' + Math.round(val).toLocaleString();
+      }
+    }
+    
+    function formatPriceDetail(val) {
+      return '¥' + Math.round(val).toLocaleString();
+    }
+    
+    const state = {
+      fund: 'acwi',
+      customRate: 5.0,
+      startYear: 2014,
+      startMonth: 1,
+      endYear: 2024,
+      endMonth: 1,
+      monthlyAmount: 30000,
+      broker: {
+        name: 'sbi',
+        cardRate: 0.5,
+        holdingRate: 0.02
+      }
+    };
+
+    // ========================================
+    // 初期化
+    // ========================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadData();
+      initializeUI();
+      setupEventListeners();
+      updatePricePreview(); // 初期表示
+    });
+
+    async function loadData() {
+      try {
+        // 外部JSONファイルからデータを読み込む
+        // ローカルテスト時は同じディレクトリにdata/index_data.jsonを配置
+        const response = await fetch('data/index_data.json');
+        if (!response.ok) {
+          throw new Error('データファイルの読み込みに失敗しました');
+        }
+        indexData = await response.json();
+        console.log('データ読み込み完了:', indexData.metadata);
+        
+        // データの範囲を確認してUIを更新
+        updateUIWithDataRange();
+      } catch (error) {
+        console.error('データ読み込みエラー:', error);
+        alert('データファイル(data/index_data.json)の読み込みに失敗しました。\nファイルが正しく配置されているか確認してください。');
+      }
+    }
+    
+    function updateUIWithDataRange() {
+      if (!indexData || !indexData.data || indexData.data.length === 0) return;
+      
+      // データの開始・終了日を取得
+      const startDate = new Date(indexData.data[0].date);
+      const endDate = new Date(indexData.data[indexData.data.length - 1].date);
+      
+      const startYear = startDate.getFullYear();
+      const endYear = endDate.getFullYear();
+      
+      // 年の選択肢を更新
+      const startYearSelect = document.getElementById('startYear');
+      const endYearSelect = document.getElementById('endYear');
+      
+      startYearSelect.innerHTML = '';
+      endYearSelect.innerHTML = '';
+      
+      for (let y = startYear; y <= endYear; y++) {
+        startYearSelect.add(new Option(y, y));
+        endYearSelect.add(new Option(y, y));
+      }
+      
+      // デフォルト値を設定
+      state.startYear = startYear;
+      state.startMonth = startDate.getMonth() + 1;
+      state.endYear = endYear;
+      state.endMonth = endDate.getMonth() + 1;
+      
+      startYearSelect.value = state.startYear;
+      endYearSelect.value = state.endYear;
+      document.getElementById('startMonth').value = state.startMonth;
+      document.getElementById('endMonth').value = state.endMonth;
+      
+      updatePeriodBadge();
+      updatePricePreview();
+    }
+
+    function initializeUI() {
+      // 月の選択肢を生成
+      const startMonthSelect = document.getElementById('startMonth');
+      const endMonthSelect = document.getElementById('endMonth');
+      
+      for (let m = 1; m <= 12; m++) {
+        startMonthSelect.add(new Option(m + '月', m));
+        endMonthSelect.add(new Option(m + '月', m));
+      }
+      
+      startMonthSelect.value = state.startMonth;
+      endMonthSelect.value = state.endMonth;
+      
+      updatePeriodBadge();
+    }
+
+    function setupEventListeners() {
+      // 銘柄選択
+      document.querySelectorAll('.fund-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.fund-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.fund = btn.dataset.fund;
+          
+          const customContainer = document.getElementById('customRateContainer');
+          if (state.fund === 'custom') {
+            customContainer.classList.add('show');
+          } else {
+            customContainer.classList.remove('show');
+          }
+          
+          updatePricePreview(); // プレビュー更新
+        });
+      });
+      
+      // カスタム利回りプリセット
+      document.querySelectorAll('.rate-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('customRate').value = btn.dataset.rate;
+          state.customRate = parseFloat(btn.dataset.rate);
+          updatePricePreview(); // プレビュー更新
+        });
+      });
+      
+      // カスタム利回り入力
+      document.getElementById('customRate').addEventListener('change', (e) => {
+        state.customRate = parseFloat(e.target.value) || 5.0;
+        updatePricePreview(); // プレビュー更新
+      });
+      
+      // 期間選択
+      ['startYear', 'startMonth', 'endYear', 'endMonth'].forEach(id => {
+        document.getElementById(id).addEventListener('change', (e) => {
+          state[id] = parseInt(e.target.value);
+          updatePeriodBadge();
+          updatePricePreview(); // プレビュー更新
+        });
+      });
+      
+      // 金額プリセット
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const amount = parseInt(btn.dataset.amount);
+          document.getElementById('monthlyAmount').value = amount;
+          state.monthlyAmount = amount;
+        });
+      });
+      
+      // 金額入力
+      document.getElementById('monthlyAmount').addEventListener('change', (e) => {
+        state.monthlyAmount = parseInt(e.target.value) || 30000;
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      });
+      
+      // 証券会社選択
+      document.querySelectorAll('.broker-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.broker-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.broker = {
+            name: btn.dataset.broker,
+            cardRate: parseFloat(btn.dataset.cardRate),
+            holdingRate: parseFloat(btn.dataset.holdingRate)
+          };
+        });
+      });
+      
+      // アコーディオン
+      document.querySelectorAll('.history-accordion').forEach(accordion => {
+        accordion.querySelector('.history-header').addEventListener('click', () => {
+          accordion.classList.toggle('open');
+        });
+      });
+      
+      // シミュレーションボタン
+      document.getElementById('simulateBtn').addEventListener('click', runSimulation);
+    }
+
+    function updatePeriodBadge() {
+      const startDate = new Date(state.startYear, state.startMonth - 1);
+      const endDate = new Date(state.endYear, state.endMonth - 1);
+      
+      let months = (endDate.getFullYear() - startDate.getFullYear()) * 12 
+                   + (endDate.getMonth() - startDate.getMonth());
+      
+      if (months < 0) months = 0;
+      
+      const years = Math.floor(months / 12);
+      const remainingMonths = months % 12;
+      
+      document.getElementById('periodBadge').textContent = 
+        `📅 投資期間：${years}年${remainingMonths}ヶ月`;
+    }
+
+    function updatePricePreview() {
+      if (!indexData) return;
+      
+      // 期間内のデータを抽出
+      const startKey = `${state.startYear}-${String(state.startMonth).padStart(2, '0')}`;
+      const endKey = `${state.endYear}-${String(state.endMonth).padStart(2, '0')}`;
+      
+      const periodData = indexData.data.filter(d => {
+        const key = d.date.substring(0, 7);
+        return key >= startKey && key <= endKey;
+      });
+      
+      if (periodData.length < 2) {
+        document.getElementById('previewStartPrice').textContent = '-';
+        document.getElementById('previewEndPrice').textContent = '-';
+        document.getElementById('previewChangeRate').textContent = '-';
+        return;
+      }
+      
+      // 価格データを取得
+      let prices, fundName;
+      if (state.fund === 'custom') {
+        prices = generateCustomPricesForPreview(periodData.length, state.customRate);
+        fundName = `カスタム（年利${state.customRate}%）`;
+      } else {
+        prices = periodData.map(d => d[state.fund]);
+        fundName = fundNames[state.fund];
+      }
+      
+      const dates = periodData.map(d => d.date);
+      const startPrice = prices[0];
+      const endPrice = prices[prices.length - 1];
+      const changeRate = ((endPrice / startPrice) - 1) * 100;
+      
+      // タイトル更新
+      document.getElementById('previewTitle').textContent = `📈 ${fundName} 価格推移`;
+      document.getElementById('previewRange').textContent = 
+        `${state.startYear}/${state.startMonth} 〜 ${state.endYear}/${state.endMonth}`;
+      
+      // 統計更新
+      document.getElementById('previewStartPrice').textContent = formatPrice(startPrice);
+      document.getElementById('previewEndPrice').textContent = formatPrice(endPrice);
+      
+      const changeRateEl = document.getElementById('previewChangeRate');
+      changeRateEl.textContent = (changeRate >= 0 ? '+' : '') + changeRate.toFixed(1) + '%';
+      changeRateEl.className = 'preview-stat-value ' + (changeRate >= 0 ? 'positive' : 'negative');
+      
+      // グラフ描画
+      drawPricePreviewChart(dates, prices);
+    }
+    
+    function generateCustomPricesForPreview(months, annualRate) {
+      const monthlyRate = Math.pow(1 + annualRate / 100, 1/12) - 1;
+      const prices = [10000];
+      
+      for (let i = 1; i < months; i++) {
+        prices.push(prices[i-1] * (1 + monthlyRate));
+      }
+      
+      return prices;
+    }
+    
+    function drawPricePreviewChart(dates, prices) {
+      const ctx = document.getElementById('pricePreviewChart').getContext('2d');
+      
+      if (previewChart) {
+        previewChart.destroy();
+      }
+      
+      // ラベル作成（間引き）
+      const step = Math.ceil(dates.length / 12);
+      const labels = dates.map((d, i) => {
+        if (i % step === 0 || i === dates.length - 1) {
+          const date = new Date(d);
+          return `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}`;
+        }
+        return '';
+      });
+      
+      // 上昇・下落で色を変える
+      const startPrice = prices[0];
+      const endPrice = prices[prices.length - 1];
+      const isPositive = endPrice >= startPrice;
+      const lineColor = isPositive ? '#4caf50' : '#f44336';
+      const bgColor = isPositive ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)';
+      
+      previewChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: prices,
+            borderColor: lineColor,
+            backgroundColor: bgColor,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => '¥' + Math.round(ctx.raw).toLocaleString()
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                maxRotation: 0,
+                font: { size: 9 },
+                callback: function(val, index) {
+                  const label = this.getLabelForValue(val);
+                  return label || null;
+                }
+              }
+            },
+            y: {
+              grid: { color: '#f0f0f0' },
+              ticks: {
+                callback: (val) => {
+                  if (val >= 10000) {
+                    return '¥' + (val / 10000).toFixed(1) + '万';
+                  } else if (val >= 1000) {
+                    return '¥' + (val / 1000).toFixed(1) + '千';
+                  }
+                  return '¥' + val;
+                },
+                font: { size: 9 },
+                maxTicksLimit: 5
+              }
+            }
+          },
+          animation: {
+            duration: 500
+          }
+        }
+      });
+    }
+
+    // ========================================
+    // シミュレーションロジック
+    // ========================================
+    function runSimulation() {
+      const btn = document.getElementById('simulateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '⏳ 計算中...';
+      
+      setTimeout(() => {
+        try {
+          const result = calculateSimulation();
+          displayResults(result);
+        } catch (error) {
+          console.error('シミュレーションエラー:', error);
+          alert('シミュレーションに失敗しました: ' + error.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '▶ シミュレーション開始';
+        }
+      }, 100);
+    }
+
+    function calculateSimulation() {
+      // 期間内のデータを抽出
+      const startKey = `${state.startYear}-${String(state.startMonth).padStart(2, '0')}`;
+      const endKey = `${state.endYear}-${String(state.endMonth).padStart(2, '0')}`;
+      
+      const periodData = indexData.data.filter(d => {
+        const key = d.date.substring(0, 7);
+        return key >= startKey && key <= endKey;
+      });
+      
+      if (periodData.length < 2) {
+        throw new Error('選択期間のデータが不足しています');
+      }
+      
+      // 日次データを月次に変換（各月の最初のデータを使用）
+      const monthlyData = [];
+      let currentMonth = '';
+      
+      for (const d of periodData) {
+        const month = d.date.substring(0, 7);
+        if (month !== currentMonth) {
+          monthlyData.push(d);
+          currentMonth = month;
+        }
+      }
+      
+      if (monthlyData.length < 2) {
+        throw new Error('選択期間のデータが不足しています');
+      }
+      
+      // カスタム利回りの場合は価格を生成
+      let prices;
+      if (state.fund === 'custom') {
+        prices = generateCustomPrices(monthlyData.length, state.customRate);
+      } else {
+        prices = monthlyData.map(d => d[state.fund]);
+      }
+      
+      const dates = monthlyData.map(d => d.date);
+      
+      // 一括投資の計算
+      const ikkatsuResult = calculateIkkatsu(prices, dates);
+      
+      // 積立投資の計算
+      const tsumitateResult = calculateTsumitate(prices, dates);
+      
+      // ポイント計算
+      const pointsResult = calculatePoints(tsumitateResult);
+      
+      return {
+        ikkatsu: ikkatsuResult,
+        tsumitate: tsumitateResult,
+        points: pointsResult,
+        dates: dates,
+        prices: prices
+      };
+    }
+
+    function generateCustomPrices(months, annualRate) {
+      // カスタム利回りで一定成長する価格を生成
+      const monthlyRate = Math.pow(1 + annualRate / 100, 1/12) - 1;
+      const prices = [10000]; // 基準価格
+      
+      for (let i = 1; i < months; i++) {
+        prices.push(prices[i-1] * (1 + monthlyRate));
+      }
+      
+      return prices;
+    }
+
+    function calculateIkkatsu(prices, dates) {
+      const totalMonths = prices.length;
+      const totalInvestment = state.monthlyAmount * totalMonths;
+      const startPrice = prices[0];
+      const endPrice = prices[prices.length - 1];
+      
+      // 購入口数（開始時に全額投資）
+      const units = totalInvestment / startPrice;
+      
+      // 最終評価額
+      const finalValue = units * endPrice;
+      
+      // 月ごとの評価額推移
+      const monthlyValues = prices.map(p => units * p);
+      
+      return {
+        totalInvestment,
+        startPrice,
+        endPrice,
+        units,
+        finalValue,
+        profit: finalValue - totalInvestment,
+        profitRate: ((finalValue / totalInvestment) - 1) * 100,
+        purchaseDate: dates[0],
+        monthlyValues
+      };
+    }
+
+    function calculateTsumitate(prices, dates) {
+      const history = [];
+      let totalUnits = 0;
+      let totalInvestment = 0;
+      const monthlyValues = [];
+      
+      // 平均価格を計算（ハイライト用）
+      const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+      
+      prices.forEach((price, i) => {
+        const units = state.monthlyAmount / price;
+        totalUnits += units;
+        totalInvestment += state.monthlyAmount;
+        
+        const currentValue = totalUnits * price;
+        monthlyValues.push(currentValue);
+        
+        history.push({
+          date: dates[i],
+          price,
+          units,
+          totalUnits,
+          investment: state.monthlyAmount,
+          totalInvestment,
+          currentValue,
+          isHighlight: price < avgPrice * 0.95 // 平均より5%以上安い
+        });
+      });
+      
+      const endPrice = prices[prices.length - 1];
+      const finalValue = totalUnits * endPrice;
+      const avgCost = totalInvestment / totalUnits;
+      
+      return {
+        history,
+        totalInvestment,
+        totalUnits,
+        avgCost,
+        finalValue,
+        profit: finalValue - totalInvestment,
+        profitRate: ((finalValue / totalInvestment) - 1) * 100,
+        purchaseCount: history.length,
+        monthlyValues
+      };
+    }
+
+    function calculatePoints(tsumitateResult) {
+      let cardPoints = 0;
+      let holdingPoints = 0;
+      
+      tsumitateResult.history.forEach((h, i) => {
+        // クレカ積立ポイント（毎月の積立額に対して）
+        cardPoints += state.monthlyAmount * (state.broker.cardRate / 100);
+        
+        // 保有ポイント（その月の評価額に対して、年率を月割り）
+        holdingPoints += h.currentValue * (state.broker.holdingRate / 100 / 12);
+      });
+      
+      return {
+        cardPoints: Math.round(cardPoints),
+        holdingPoints: Math.round(holdingPoints),
+        totalPoints: Math.round(cardPoints + holdingPoints)
+      };
+    }
+
+    // ========================================
+    // 結果表示
+    // ========================================
+    function displayResults(result) {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.classList.add('show');
+      
+      // 金額フォーマット
+      const formatYen = (val) => Math.round(val).toLocaleString() + '円';
+      const formatRate = (val) => (val >= 0 ? '+' : '') + val.toFixed(1) + '%';
+      
+      // 勝者判定
+      const tsumitateWins = result.tsumitate.finalValue > result.ikkatsu.finalValue;
+      
+      // 一括投資カード
+      const ikkatsuCard = document.getElementById('ikkatsuCard');
+      ikkatsuCard.classList.toggle('winner', !tsumitateWins);
+      document.getElementById('ikkatsuAmount').textContent = formatYen(result.ikkatsu.finalValue);
+      document.getElementById('ikkatsuPrincipal').textContent = '元本 ' + formatYen(result.ikkatsu.totalInvestment);
+      
+      const ikkatsuDiff = document.getElementById('ikkatsuDiff');
+      if (!tsumitateWins) {
+        const diff = result.ikkatsu.finalValue - result.tsumitate.finalValue;
+        ikkatsuDiff.textContent = '積立より +' + formatYen(diff);
+        ikkatsuDiff.className = 'diff positive';
+      } else {
+        ikkatsuDiff.textContent = formatRate(result.ikkatsu.profitRate);
+        ikkatsuDiff.className = 'diff';
+      }
+      
+      // 積立投資カード
+      const tsumitateCard = document.getElementById('tsumitateCard');
+      tsumitateCard.classList.toggle('winner', tsumitateWins);
+      document.getElementById('tsumitateAmount').textContent = formatYen(result.tsumitate.finalValue);
+      document.getElementById('tsumitatePrincipal').textContent = '元本 ' + formatYen(result.tsumitate.totalInvestment);
+      
+      const tsumitateDiff = document.getElementById('tsumitateDiff');
+      if (tsumitateWins) {
+        const diff = result.tsumitate.finalValue - result.ikkatsu.finalValue;
+        tsumitateDiff.textContent = '一括より +' + formatYen(diff) + ' 💪';
+        tsumitateDiff.className = 'diff positive';
+      } else {
+        tsumitateDiff.textContent = formatRate(result.tsumitate.profitRate);
+        tsumitateDiff.className = 'diff';
+      }
+      
+      // ポイント
+      document.getElementById('totalPoints').textContent = 
+        result.points.totalPoints.toLocaleString() + ' pt';
+      
+      // グラフ描画
+      drawChart(result);
+      
+      // 一括投資詳細
+      const startDate = new Date(result.ikkatsu.purchaseDate);
+      document.getElementById('ikkatsuDetail').innerHTML = `
+        <div class="ikkatsu-row">
+          <span class="ikkatsu-label">購入日</span>
+          <span class="ikkatsu-value">${startDate.getFullYear()}年${startDate.getMonth()+1}月</span>
+        </div>
+        <div class="ikkatsu-row">
+          <span class="ikkatsu-label">投資金額</span>
+          <span class="ikkatsu-value">${formatYen(result.ikkatsu.totalInvestment)}</span>
+        </div>
+        <div class="ikkatsu-row">
+          <span class="ikkatsu-label">購入時価格</span>
+          <span class="ikkatsu-value">${formatPriceDetail(result.ikkatsu.startPrice)}</span>
+        </div>
+        <div class="ikkatsu-row">
+          <span class="ikkatsu-label">購入口数</span>
+          <span class="ikkatsu-value">${result.ikkatsu.units.toFixed(4)}口</span>
+        </div>
+        <div class="ikkatsu-row">
+          <span class="ikkatsu-label">終了時価格</span>
+          <span class="ikkatsu-value">${formatPriceDetail(result.ikkatsu.endPrice)}</span>
+        </div>
+        <div class="ikkatsu-row">
+          <span class="ikkatsu-label">終了時評価額</span>
+          <span class="ikkatsu-value">${formatYen(result.ikkatsu.finalValue)}</span>
+        </div>
+        <div class="ikkatsu-row">
+          <span class="ikkatsu-label">損益</span>
+          <span class="ikkatsu-value" style="color: ${result.ikkatsu.profit >= 0 ? '#4caf50' : '#f44336'}">
+            ${result.ikkatsu.profit >= 0 ? '+' : ''}${formatYen(result.ikkatsu.profit)}（${formatRate(result.ikkatsu.profitRate)}）
+          </span>
+        </div>
+      `;
+      
+      // 積立投資テーブル
+      const tbody = document.getElementById('tsumitateTableBody');
+      tbody.innerHTML = result.tsumitate.history.map(h => {
+        const date = new Date(h.date);
+        return `
+          <tr class="${h.isHighlight ? 'highlight' : ''}">
+            <td>${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}</td>
+            <td>${formatPriceDetail(h.price)}</td>
+            <td>${h.units.toFixed(4)}</td>
+            <td>${h.totalUnits.toFixed(4)}</td>
+          </tr>
+        `;
+      }).join('');
+      
+      // サマリー
+      document.getElementById('avgCost').textContent = formatPriceDetail(result.tsumitate.avgCost);
+      document.getElementById('totalUnits').textContent = result.tsumitate.totalUnits.toFixed(4) + '口';
+      document.getElementById('purchaseCount').textContent = result.tsumitate.purchaseCount + '回';
+      
+      // 結果までスクロール
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function drawChart(result) {
+      const ctx = document.getElementById('resultChart').getContext('2d');
+      
+      // 既存のチャートを破棄
+      if (chart) {
+        chart.destroy();
+      }
+      
+      // ラベル作成（年/月形式）
+      const labels = result.dates.map(d => {
+        const date = new Date(d);
+        return `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}`;
+      });
+      
+      // 間引き（データが多い場合）
+      const step = Math.ceil(labels.length / 24);
+      const filteredLabels = labels.filter((_, i) => i % step === 0 || i === labels.length - 1);
+      const filteredTsumitate = result.tsumitate.monthlyValues.filter((_, i) => i % step === 0 || i === result.tsumitate.monthlyValues.length - 1);
+      const filteredIkkatsu = result.ikkatsu.monthlyValues.filter((_, i) => i % step === 0 || i === result.ikkatsu.monthlyValues.length - 1);
+      
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: filteredLabels,
+          datasets: [
+            {
+              label: '積立投資',
+              data: filteredTsumitate,
+              borderColor: '#667eea',
+              backgroundColor: 'rgba(102, 126, 234, 0.1)',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 0,
+              borderWidth: 2
+            },
+            {
+              label: '一括投資',
+              data: filteredIkkatsu,
+              borderColor: '#bdbdbd',
+              backgroundColor: 'rgba(189, 189, 189, 0.1)',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 0,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ctx.dataset.label + ': ¥' + Math.round(ctx.raw).toLocaleString()
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                maxRotation: 45,
+                font: { size: 10 }
+              }
+            },
+            y: {
+              grid: { color: '#f0f0f0' },
+              ticks: {
+                callback: (val) => {
+                  if (val >= 100000000) {
+                    return '¥' + (val / 100000000).toFixed(1) + '億';
+                  } else if (val >= 10000) {
+                    return '¥' + (val / 10000).toFixed(0) + '万';
+                  }
+                  return '¥' + val.toLocaleString();
+                },
+                font: { size: 10 }
+              }
+            }
+          },
+          animation: {
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
