@@ -1,0 +1,47 @@
+name: Update Index Data
+
+on:
+  # 毎週月曜日の朝9時（日本時間）に実行
+  schedule:
+    - cron: '0 0 * * 1'
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas
+      
+      - name: Fetch latest data
+        run: |
+          python fetch_index_data.py
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet data/index_data.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/index_data.json
+          git commit -m "📊 Update index data $(date +'%Y-%m-%d')"
+          git push
