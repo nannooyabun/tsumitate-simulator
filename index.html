@@ -1600,17 +1600,26 @@
       }
       
       // 価格データを取得
-      let prices, fundName;
+      let prices, fundName, dates;
       if (state.fund === 'custom') {
-        const monthSet = new Set(periodData.map(d => d.date.substring(0, 7)));
-        prices = generateCustomPricesForPreview(monthSet.size, state.customRate);
+        // カスタム利率は月次で計算するため、月次データに変換
+        const monthlyPreviewData = [];
+        let curMonth = '';
+        for (const d of periodData) {
+          const m = d.date.substring(0, 7);
+          if (m !== curMonth) {
+            monthlyPreviewData.push(d);
+            curMonth = m;
+          }
+        }
+        prices = generateCustomPricesForPreview(monthlyPreviewData.length, state.customRate);
+        dates = monthlyPreviewData.map(d => d.date);
         fundName = `カスタム（年利${state.customRate}%）`;
       } else {
         prices = periodData.map(d => d[state.fund]);
+        dates = periodData.map(d => d.date);
         fundName = fundNames[state.fund];
       }
-      
-      const dates = periodData.map(d => d.date);
       const startPrice = prices[0];
       const endPrice = prices[prices.length - 1];
       const changeRate = ((endPrice / startPrice) - 1) * 100;
