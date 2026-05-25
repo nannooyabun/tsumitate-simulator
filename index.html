@@ -1602,7 +1602,8 @@
       // 価格データを取得
       let prices, fundName;
       if (state.fund === 'custom') {
-        prices = generateCustomPricesForPreview(periodData.length, state.customRate);
+        const monthSet = new Set(periodData.map(d => d.date.substring(0, 7)));
+        prices = generateCustomPricesForPreview(monthSet.size, state.customRate);
         fundName = `カスタム（年利${state.customRate}%）`;
       } else {
         prices = periodData.map(d => d[state.fund]);
@@ -1820,7 +1821,10 @@
 
     function calculateIkkatsu(prices, dates) {
       const totalMonths = prices.length;
-      const totalInvestment = state.monthlyAmount * totalMonths;
+      let totalInvestment = state.monthlyAmount * totalMonths;
+      if (state.nisaLimit && totalInvestment > state.nisaMaxAmount) {
+        totalInvestment = state.nisaMaxAmount;
+      }
       const startPrice = prices[0];
       const endPrice = prices[prices.length - 1];
       
@@ -1925,8 +1929,8 @@
       let holdingPoints = 0;
       
       tsumitateResult.history.forEach((h, i) => {
-        // クレカ積立ポイント（毎月の積立額に対して）
-        cardPoints += state.monthlyAmount * (state.broker.cardRate / 100);
+        // クレカ積立ポイント（毎月の実際の積立額に対して）
+        cardPoints += h.investment * (state.broker.cardRate / 100);
         
         // 保有ポイント（その月の評価額に対して、年率を月割り）
         holdingPoints += h.currentValue * (state.broker.holdingRate / 100 / 12);
