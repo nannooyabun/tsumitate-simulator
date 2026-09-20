@@ -1162,6 +1162,24 @@
             <div class="rate">自由入力</div>
           </div>
         </div>
+
+        <!-- カスタム証券会社ポイント率入力 -->
+        <div class="custom-rate-container" id="brokerCustomContainer">
+          <div class="custom-rate-row">
+            <span class="custom-rate-label">クレカ積立</span>
+            <div class="custom-rate-input-wrap">
+              <input type="number" class="custom-rate-input" id="brokerCardRate" value="0.5" step="0.1" min="0" max="10">
+              <span class="custom-rate-unit">%</span>
+            </div>
+          </div>
+          <div class="custom-rate-row" style="margin-top: 8px;">
+            <span class="custom-rate-label">保有ポイント</span>
+            <div class="custom-rate-input-wrap">
+              <input type="number" class="custom-rate-input" id="brokerHoldingRate" value="0.03" step="0.01" min="0" max="5">
+              <span class="custom-rate-unit">%</span>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- NISA上限設定 -->
@@ -1537,12 +1555,35 @@
         btn.addEventListener('click', () => {
           document.querySelectorAll('.broker-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          state.broker = {
-            name: btn.dataset.broker,
-            cardRate: parseFloat(btn.dataset.cardRate),
-            holdingRate: parseFloat(btn.dataset.holdingRate)
-          };
+          const brokerCustomContainer = document.getElementById('brokerCustomContainer');
+          if (btn.dataset.broker === 'custom') {
+            brokerCustomContainer.classList.add('show');
+            state.broker = {
+              name: 'custom',
+              cardRate: parseFloat(document.getElementById('brokerCardRate').value) || 0,
+              holdingRate: parseFloat(document.getElementById('brokerHoldingRate').value) || 0
+            };
+          } else {
+            brokerCustomContainer.classList.remove('show');
+            state.broker = {
+              name: btn.dataset.broker,
+              cardRate: parseFloat(btn.dataset.cardRate),
+              holdingRate: parseFloat(btn.dataset.holdingRate)
+            };
+          }
         });
+      });
+
+      // カスタム証券会社ポイント率入力
+      document.getElementById('brokerCardRate').addEventListener('input', (e) => {
+        if (state.broker.name === 'custom') {
+          state.broker.cardRate = parseFloat(e.target.value) || 0;
+        }
+      });
+      document.getElementById('brokerHoldingRate').addEventListener('input', (e) => {
+        if (state.broker.name === 'custom') {
+          state.broker.holdingRate = parseFloat(e.target.value) || 0;
+        }
       });
       
       // アコーディオン
